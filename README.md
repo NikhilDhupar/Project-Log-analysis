@@ -9,12 +9,12 @@ We are building a reporting tool that prints out reports based on data in databa
 ## Views used!
 
   -   #### View 1 - articleviews
- ` create view articleviews as select (select replace ( path , '/article/' , '' ) as articlename),count(*) as viewcount from log where status like '2%' and path not like '/' group by path order by viewcount desc; `
+ ` create view aview as select (select replace ( path , '/article/' , '' ) as aname),count(*) as vcount from log where status = '200 OK' and path != '/' group by path order by vcount desc; `
 
 > This view extracts all the articles viewed and the number of views each article got arranged in descending order
 
 -   #### View 2 - summary
-` create view summary as select a.articlename,a.viewcount,b.author as authorid,c.name as author from articleviews as a,articles as b,authors as c where a.articlename = b.slug and c.id=b.author; `
+` create view final as select a.aname,a.vcount,b.author as authorid,c.name as auth from aview as a,articles as b,authors as c where a.aname = b.slug and c.id=b.author; `
 > This view returns a table where each article is listed with its views author name and author id
 
 -   #### View 3 - requestsperdate
@@ -22,11 +22,11 @@ We are building a reporting tool that prints out reports based on data in databa
 >This view gives how many users visited the website each day.
 
 -   #### View 4 - errorsperdate
-` create view errorsperdate as select count(*) as errorcount,date(time) as date from log where status like '4%' group by date; `
+` create view errorsperdate as select count(*) as errorcount,date(time) as date from log where status = '404 NOT FOUND' group by date; `
 >Tells the error requests made each day.
 
 -   #### View 5 - errorsearch
-` create view errorsearch as select r.date,(select trunc((e.errorcount::decimal/r.totalrequests*100),1) as errorratio) from requestsperdate as r,errorsperdate as e where e.date=r.date; `
+` create view esearch as select r.date,(select trunc((e.errorcount::decimal/r.totalrequests*100),1) as eratio) from requestsperdate as r,errorsperdate as e where e.date=r.date; `
 >Tells the error to total request ratio per day.
 
 ## How to use this ?
