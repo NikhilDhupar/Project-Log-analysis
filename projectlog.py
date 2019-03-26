@@ -32,8 +32,8 @@ else:
         "select * from esearch where eratio>1 order by eratio desc;")
     ans = c.fetchall()
     for i in ans:
-        date = ans[0][0]
-        errorratio = ans[0][1]
+        date = i[0]
+        errorratio = i[1]
         date = datetime.strftime(date, '%b %d, %Y')
         print(date, " - ", errorratio, "%errors")
     db.close()
